@@ -1,0 +1,9 @@
+    const sendData = {
+      body:this.state.body,
+      userId:this.state.userId,
+      title:this.state.title
+    }
+    console.log(sendData);
+
+    dispatchFun2: () => dispatch({ type: 'postData' }),
+    this.props.dispatchFun2()
