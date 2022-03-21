@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import { Button, Form } from 'react-bootstrap';
-const Popup = ({ ShowInputBox, handleChange, handleSubmit, state, error }) => {
+const Popup = ({ ShowInputBox, handleChange, handleSubmit, state, auth }) => {
     const [show, setShow] = React.useState(false);
     console.log();
 
@@ -16,6 +16,9 @@ const Popup = ({ ShowInputBox, handleChange, handleSubmit, state, error }) => {
     const handleClose = () => {
         setShow(false)
     };
+    const handleLoginPage =()=>{
+        auth(false)
+    }
     return (
         <>
             <Button variant="danger" onClick={handleShow} className='m-2'>
@@ -63,6 +66,8 @@ const Popup = ({ ShowInputBox, handleChange, handleSubmit, state, error }) => {
                     </Form>
                 </Modal.Body>
             </Modal>
+            <Button variant="secondary" onClick={handleLoginPage}>Logout</Button>
+
         </>
     )
 }

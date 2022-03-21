@@ -1,0 +1,15 @@
+to start
+    git init
+to add
+    git add fileName
+check status
+    git status
+commit changes
+    git commit -m "DESCRIBE COMMIT IN A FEW WORDS"
+push git
+    git push origin <branch-name>
+to create branch
+    git branch hello-world-images
+
+authinterceptor 
+api working

@@ -1,18 +1,21 @@
 import React from "react";
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Button } from "react-bootstrap";
-import Table from './Table'
-import Popup from "./PopUp";
+import LoginPage from "./LoginPage";
+import TablePage from "./TablePage";
 
 class App extends React.Component {
   constructor(props) {
     super()
     this.state = {
+      user: null,
       show: false,
       popupShow: false,
       userId: '',
       body: '',
       title: '',
+      loginUserName: '',
+      password: '',
       store: [],
       error: {
         userId: '',
@@ -21,9 +24,33 @@ class App extends React.Component {
       }
     }
   }
-  x;
+
   componentDidMount() {
-    console.log(this.props.totalState);
+    console.log(this.state.user);
+    console.log(this.state.loginUserName);
+    const fromLSUser = localStorage.getItem("user");
+    const fromLSName = localStorage.getItem("loginUserName");
+    this.props.dispatchFun()
+    this.setState({
+      ...this.state,
+      store: this.props.totalState.details,
+      loginUserName:fromLSName
+    })
+    fromLSUser && JSON.parse(fromLSUser) ? this.setState({
+      user: true,
+      loginUserName: fromLSName,
+    }) : this.setState({
+      user: false
+    });
+    console.log(fromLSName);
+    console.log(fromLSUser);
+  }
+
+  componentDidUpdate() {
+    console.log(this.state.user);
+    console.log(this.state.loginUserName);
+    localStorage.setItem('user', this.state.user)
+    localStorage.setItem('loginUserName', this.state.loginUserName);
   }
 
   columns = [
@@ -49,16 +76,9 @@ class App extends React.Component {
     }
   ];
 
-  ShowInputBox = () => {
+  showInputBox = () => {
     this.setState({
       show: true,
-    })
-  }
-  showTable = () => {
-    this.props.dispatchFun()
-    this.setState({
-      ...this.state,
-      store: this.props.totalState.details
     })
   }
   handleChange = (e) => {
@@ -106,33 +126,45 @@ class App extends React.Component {
       })
     }
   }
+
+  auth = (data) => {
+    this.setState({
+      user: data,
+      loginUserName: '',
+      password: '',
+    })
+  }
+
   render() {
     return (
-      <div>
-        <div className="text-center m-5">
-          <Button variant="primary" onClick={this.showTable}>clicke here to fetch data</Button>
-        </div>
-
-        {this.props.totalState.isFetching ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-            <h2>fetching...</h2>
-          </div>
-        ) : (
-          <>
-            <Table
-              data={this.props.totalState.details}
-              columns={this.columns}
-              store={this.state.store}
-            />
-            <Popup
+      <Routes>
+        {!this.state.user &&
+          <Route path="/" element={
+            <LoginPage
               handleChange={this.handleChange}
-              ShowInputBox={this.ShowInputBox}
-              handleSubmit={this.handleSubmit}
               state={this.state}
+              auth={this.auth}
+              showTable={this.showTable}
             />
-          </>
-        )}
-      </div>
+          } />
+        }
+
+        {this.state.user &&
+          <Route path="/table" element={
+            <TablePage
+              showTable={this.showTable}
+              showInputBox={this.showInputBox}
+              totalState={this.props.totalState}
+              columns={this.columns}
+              state={this.state}
+              handleChange={this.handleChange}
+              handleSubmit={this.handleSubmit}
+              auth={this.auth}
+            />
+          } />
+        }
+        <Route path='*' element={<Navigate to={this.state.user ? "/table" : "/"} />} />
+      </Routes>
     );
   }
 }
